@@ -3,6 +3,11 @@ package com.hoaxify.hoaxify.error;
 
 import java.util.Date;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(value = Include.NON_NULL)
 public class ApiError {
 	
 	private long timestampt = new Date().getTime();
