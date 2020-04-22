@@ -5,12 +5,14 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { UserSignupPage } from './pages/UserSignupPage';
 import * as apiCalls from './api/apiCalls';
+import {LoginPage} from './pages/LoginPage';
 
 const actions = {
-     postSignup: apiCalls.signup
+     //postSignup: apiCalls.signup
+     postLogin: apiCalls.login
 }
 
-ReactDOM.render(<UserSignupPage actions={actions}/>, 
+ReactDOM.render(<LoginPage actions = {actions}/>, 
     document.getElementById('root')
     );
 

@@ -80,6 +80,7 @@ describe('Interactions', () => {
         fireEvent.change(passwordRepeat, changeEvent('my-password'));
 
         button = container.querySelector('button');
+        return rendered;
     }
     it("sets displayName value into state", () => {
         const {queryByPlaceholderText} = render(<UserSignupPage/>);
@@ -145,7 +146,7 @@ describe('Interactions', () => {
         
         fireEvent.click(button)
         expect(actions.postSignup).toHaveBeenCalledTimes(1);
-    })/*
+    })
     it("displays spinner when there is ongoing api call", () => {
         const actions = {
             postSignup: mockAsyncDelayed()
@@ -155,7 +156,27 @@ describe('Interactions', () => {
     
         const spinner = queryByText('Loading...');
         expect(spinner).toBeInTheDocument();
-    }) */   // hata verdiğinden bıraktım
+    })   
+    it("hides spinner after api call finishes with error", async() => {
+        const actions = {
+            postSignup: jest.fn().mockImplementation(() => {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        reject({
+                            response:{data:{}}
+                        });
+                    }, 300)
+                })
+            })
+        }
+
+        const { queryByText } = setupForSubmit({ actions });
+        fireEvent.click(button)
+        
+        await waitForDomChange();
+        const spinner = queryByText("Loading...")
+        expect(spinner).not.toBeInTheDocument();
+    })
     /*
     it('displays validation error for displayName when error is recieved for the field', async() => {
         const actions = {
@@ -186,7 +207,7 @@ describe('Interactions', () => {
         fireEvent.change(passwordRepeat, changeEvent('new-pass'));
         expect(button).toBeDisabled();
     })*/
-    it('disables the signup button when password does not match to password repeat', ()=>{
+    /*it('disables the signup button when password does not match to password repeat', ()=>{
         setupForSubmit();
         fireEvent.change(passwordInput, changeEvent('new-pass'));
         expect(button).toBeDisabled();
@@ -196,6 +217,6 @@ describe('Interactions', () => {
         fireEvent.change(passwordRepeat, changeEvent('new-pass'));
         const mismatchWarning = queryByText('Does not match to password')
         expect(mismatchWarning).toBeInTheDocument()
-    })
+    })*/
 
 })

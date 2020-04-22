@@ -7,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class UniqueUsernameValidator implements ConstraintValidator<UniqueUsername, String>{
 
-	
 	@Autowired
 	UserRepository userRepository;
-	
 	
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
