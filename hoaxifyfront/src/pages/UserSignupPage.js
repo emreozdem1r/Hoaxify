@@ -64,7 +64,7 @@ export class UserSignupPage extends React.Component {
             displayName: this.state.displayName,
             password: this.state.password
         }
-        this.setState({ pendingApiCall:true })
+        this.setState({ pendingApiCall:true }, () => this.props.history.push('/'))
 
         this.props.actions.
             postSignup(user).
@@ -150,6 +150,9 @@ UserSignupPage.defaultProps = {
                 resolve({})
             })
         }
+    },
+    history: {
+        push: () => {}
     }
 }
 export default UserSignupPage;

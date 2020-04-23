@@ -223,7 +223,21 @@ describe('LoginPage', () => {
             const spinner = queryByText("Loading...")
             expect(spinner).not.toBeInTheDocument();
         })
+        it("redirect to HomePage after succesfull login", async() => {
+            const actions = {
+                postLogin: jest.fn().mockResolvedValue({})
+            }
+            const history = {
+                push: jest.fn()
+            }
+            setupForSubmit({ actions, history });
+            fireEvent.click(button)
+            
+            await waitForDomChange();
+            expect(history.push).toHaveBeenCalledWith('/');
+        })
     })
     
 })
 
+console.error = () => { }

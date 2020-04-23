@@ -218,5 +218,17 @@ describe('Interactions', () => {
         const mismatchWarning = queryByText('Does not match to password')
         expect(mismatchWarning).toBeInTheDocument()
     })*/
-
+    it("redirect to HomePage after succesfull signup", async() => {
+        const actions = {
+            postSignup: jest.fn().mockResolvedValue({})
+        }
+        const history = {
+            push: jest.fn()
+        }
+        setupForSubmit({ actions, history });
+        fireEvent.click(button)
+        
+        await waitForDomChange();
+        expect(history.push).toHaveBeenCalledWith('/');
+    })
 })

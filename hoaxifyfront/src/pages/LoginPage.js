@@ -37,6 +37,8 @@ export class LoginPage extends React.Component{
             then(response =>{
                 this.setState({
                     pendingApiCall:false
+                }, () => {
+                    this.props.history.push('/');
                 })
         })
         .catch(error => {
