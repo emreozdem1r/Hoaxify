@@ -1,6 +1,10 @@
 import React from 'react'
 import Input from '../components/Input'
 import ButtonWithProgress from "../components/ButtonWithProgress"
+import {connect} from 'react-redux'
+import * as authActions from '../redux/authActions'
+
+
 export class UserSignupPage extends React.Component {
 
     state = {
@@ -64,12 +68,14 @@ export class UserSignupPage extends React.Component {
             displayName: this.state.displayName,
             password: this.state.password
         }
-        this.setState({ pendingApiCall:true }, () => this.props.history.push('/'))
+        this.setState({ pendingApiCall:true })
 
         this.props.actions.
             postSignup(user).
             then((response) => {
-            this.setState({pendingApiCall:false});
+                this.setState({pendingApiCall:false}, () => 
+                this.props.history.push('/'));
+                
         }).catch((apiError) => {
             let errors = { ...this.state.errors }
             if(apiError.response.data && apiError.response.data.validationErrors) {
@@ -155,4 +161,14 @@ UserSignupPage.defaultProps = {
         push: () => {}
     }
 }
-export default UserSignupPage;
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        actions: {
+            postSignup: (user) => dispatch(authActions.signupHandler(user))
+        }
+    }
+}
+
+
+export default connect(null, mapDispatchToProps)(UserSignupPage);

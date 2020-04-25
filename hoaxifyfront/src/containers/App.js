@@ -7,10 +7,6 @@ import { render } from '@testing-library/react';
 import UserPage from '../pages/UserPage';
 import * as apiCalls from '../api/apiCalls';
 import Topbar from '../components/TopBar';
-const actions = {
-     postSignup: apiCalls.signup,
-     postLogin: apiCalls.login
-}
 
 
 function App() {
@@ -20,8 +16,8 @@ function App() {
     <div className = "container">
       <Switch>
         <Route exact path="/" component={HomePage}/>
-        <Route path="/login" component={(props) => <LoginPage {...props} actions = {actions}/>}/>
-        <Route path="/signup" component={(props) => <UserSignupPage {...props} actions = {actions}/>}/>
+        <Route path="/login" component={LoginPage}/>
+        <Route path="/signup" component={UserSignupPage}/>
         <Route path="/:username" component={UserPage}/>
       </Switch>
     </div>
