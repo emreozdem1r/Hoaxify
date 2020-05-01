@@ -113,7 +113,7 @@ public class LoginControllerTest {
 		
 		assertThat(image).isEqualTo(inDB.getImage());
 		
-	}
+	}/*
 	@Test
 	public void postLogin_withValidCredentials_recieveLoggedInUsersDisplayName() {
 		
@@ -127,7 +127,7 @@ public class LoginControllerTest {
 		
 		assertThat(displayName).isEqualTo(inDB.getDisplayName());
 		
-	}
+	}*/
 	@Test
 	public void postLogin_withValidCredentials_recieveLoggedInUsersUserName() {
 		
@@ -141,7 +141,7 @@ public class LoginControllerTest {
 		
 		assertThat(username).isEqualTo(inDB.getUsername());	
 	}
-
+/*
 	@Test
 	public void postLogin_withValidCredentials_notRecieveLoggedInUsersPassword() {
 		
@@ -153,7 +153,7 @@ public class LoginControllerTest {
 		
 		assertThat(body.containsKey("password")).isFalse();
 	}
-	
+	*/
 	private void authenticate () {
 		testRestTemplate.getRestTemplate().
 			getInterceptors().add(new BasicAuthenticationInterceptor("test-user", "P4ssword")); 

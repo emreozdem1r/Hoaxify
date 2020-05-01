@@ -15,19 +15,26 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
 
 import com.hoaxify.hoaxify.error.ApiError;
 import com.hoaxify.hoaxify.shared.GenericResponse;
 import com.hoaxify.hoaxify.user.User;
 import com.hoaxify.hoaxify.user.UserRepository;
+import com.hoaxify.hoaxify.user.UserService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -40,6 +47,9 @@ public class UserControllerTest {
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	UserService userService;
 	
 	@Before
 	public void cleanup() {
@@ -225,10 +235,99 @@ public class UserControllerTest {
 		assertThat(validationErrors.get("username")).isEqualTo("This name is in use");
 
 	}
+	@Test
+	public void getUsers_whenThereAreNoUsersInDb_recievePageWithZeroItems() {
+		ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<TestPage<Object>>() {
+		});
+		assertThat(response.getBody().getTotalElements()).isEqualTo(0);
+	}
+	@Test
+	public void getUsers_whenThereIsAUserInDB_recievePageWithUser() {
+		userRepository.save(TestUtil.createValidUser());
+		ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<TestPage<Object>>() {
+		});
+		assertThat(response.getBody().getTotalElements()).isEqualTo(1);
+	}
+	/*
+	@Test
+	public void getUsers_whenThereIsAUserInDB_recieveUserWithoutPassword() {
+		userRepository.save(TestUtil.createValidUser());
+		ResponseEntity<TestPage<Map<String, Object>>> response = getUsers(new ParameterizedTypeReference<TestPage<Map<String, Object>>>() {});
+		Map<String, Object> entity = response.getBody().getContent().get(0);
+		assertThat(entity.containsKey("password")).isFalse();
+	}*/
+	@Test
+	public void getUsers_whenThereAreNoUsersInDb_recieveOk() {
+		ResponseEntity<Object> response = testRestTemplate.getForEntity(API_1_0_USERS, Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+	}
+	/*
+	@Test
+	public void getUsers_whenPageIsRequestedFor3ItemsPerPageWhereTheDatabaseHas20Users_receive3Users() {
+		IntStream.rangeClosed(1, 20).mapToObj(i -> "test-user-" + i)
+			.map(TestUtil::createValidUser)
+			.forEach(userRepository::save);
+		String path = API_1_0_USERS + "?page=0&size=3";
+		ResponseEntity<TestPage<Object>> response = getUsers(path, new ParameterizedTypeReference<TestPage<Object>>() {	});
+		assertThat(response.getBody().getContent().size()).isEqualTo(3);
+	}*/
+	
+	//Eğer listelemede hata alınırsa buraya dön!!!!!!
+	@Test
+	public void getUsers_whenPageSizeNotProvided_recievePageSizeAs10() {
+		ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<TestPage<Object>>() {
+		});
+		assertThat(response.getBody().getSize()).isEqualTo(10);
+	}
+	@Test
+	public void getUsers_whenPageSizeIsGreaterThan100_recievePageSizeAs100() {
+		String path = API_1_0_USERS + "?size=500";
+		ResponseEntity<TestPage<Object>> response = getUsers(path, new ParameterizedTypeReference<TestPage<Object>>() {
+		});
+		assertThat(response.getBody().getSize()).isEqualTo(100);
+	}
+	@Test
+	public void getUsers_whenPageSizeIsNegative_recievePageSizeAs10() {
+		String path = API_1_0_USERS + "?size=-5";
+		ResponseEntity<TestPage<Object>> response = getUsers(path, new ParameterizedTypeReference<TestPage<Object>>() {
+		});
+		assertThat(response.getBody().getSize()).isEqualTo(10);
+	}
+	@Test
+	public void getUsers_whenPageSizeIsNegative_recieveFirstAge() {
+		String path = API_1_0_USERS + "?size=-5";
+		ResponseEntity<TestPage<Object>> response = getUsers(path, new ParameterizedTypeReference<TestPage<Object>>() {
+		});
+		assertThat(response.getBody().getNumber()).isEqualTo(0);
+	}
+	
+	public void getUsers_whenUserLoggedIn_recievePageWithoutLoggedInUser() {
+		userService.save(TestUtil.createValidUser("user1"));
+		userService.save(TestUtil.createValidUser("user2"));
+		userService.save(TestUtil.createValidUser("user3"));
+		
+		authenticate("user1");
+		
+		ResponseEntity<TestPage<Object>> response = getUsers(new ParameterizedTypeReference<TestPage<Object>>() {
+		});
+		
+		assertThat(response.getBody().getTotalElements()).isEqualTo(2);
+		
+	}
 	public <T> ResponseEntity<T> postSignup(Object request, Class<T> response){
 		return testRestTemplate.postForEntity(API_1_0_USERS, request, response);
 	}
 	
-
+	public <T> ResponseEntity<T> getUsers(ParameterizedTypeReference<T> responseType){
+		return testRestTemplate.exchange(API_1_0_USERS,HttpMethod.GET, null, responseType);
+	}
+	public <T> ResponseEntity<T> getUsers(String path, ParameterizedTypeReference<T> responseType){
+		return testRestTemplate.exchange(path, HttpMethod.GET, null, responseType);
+	}
+	
+	private void authenticate (String username) {
+		testRestTemplate.getRestTemplate().
+			getInterceptors().add(new BasicAuthenticationInterceptor("test-user", "P4ssword")); 
+	}
 	
 }
