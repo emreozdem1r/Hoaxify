@@ -24,7 +24,7 @@ describe('UserListItem', () => {
         const image = container.querySelector('img');
         expect(image).toBeInTheDocument();
     })
-    it('displays default image  when user does not hae one', () => {
+    it('displays default image  when user does not have one', () => {
         const userWithoutImage = {
             ...user,
             image: undefined
@@ -33,10 +33,10 @@ describe('UserListItem', () => {
         const image = container.querySelector('img');
         expect(image.src).toContain('/profile.png')
     })
-    it('displays default image  when user does not hae one', () => {
-        
-        const {container} = setup()
+    it('displays users image when user have one', () => {
+       
+        const { container } = setup();
         const image = container.querySelector('img');
-        expect(image.src).toContain('/image/profile/' + user.image)
-    })
+        expect(image.src).toContain('/images/profile/' + user.image);
+    });
 })

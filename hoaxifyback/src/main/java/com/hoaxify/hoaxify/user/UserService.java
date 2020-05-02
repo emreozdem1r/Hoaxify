@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.hoaxify.hoaxify.error.NotFoundException;
+
 @Service
 public class UserService {
 	
@@ -30,6 +32,14 @@ public class UserService {
 		}
 		return userRepository.findAll(pageable);
 		
+	}
+
+	public User getByUsername(String username) {
+		
+		User inDB = userRepository.findByUsername(username);
+		if(inDB == null)
+			throw new NotFoundException(username + "not found");
+		return inDB;
 	}
 	
 }

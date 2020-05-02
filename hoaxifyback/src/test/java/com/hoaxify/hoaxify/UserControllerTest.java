@@ -10,6 +10,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.http.util.TextUtils;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -314,6 +315,33 @@ public class UserControllerTest {
 		assertThat(response.getBody().getTotalElements()).isEqualTo(2);
 		
 	}
+	@Test
+	public void getUserByUsername_whenUserExist_recieveOk() {
+		String username = "test-user";
+		userService.save(TestUtil.createValidUser(username));
+		ResponseEntity<Object> response = getUsers(username, Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+	}
+	@Test
+	public void getUserByUsername_whenUserExist_recieveUserWithoutPassword() {
+		String username = "test-user";
+		userService.save(TestUtil.createValidUser(username));
+		ResponseEntity<String> response = getUsers(username, String.class);
+		assertThat(response.getBody().contains("password")).isFalse();
+	}
+	@Test
+	public void getUserByUsername_whenUserDoesNotExist_recieveNotFound() {
+
+		ResponseEntity<Object> response = getUsers("unknown-user", Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+	}
+	@Test
+	public void getUserByUsername_whenUserDoesNotExist_recieveApiError() {
+
+		ResponseEntity<ApiError> response = getUsers("unknown-user", ApiError.class);
+		assertThat(response.getBody().getMessage().contains("unknown-user")).isTrue();
+	}
+	
 	public <T> ResponseEntity<T> postSignup(Object request, Class<T> response){
 		return testRestTemplate.postForEntity(API_1_0_USERS, request, response);
 	}
@@ -324,7 +352,11 @@ public class UserControllerTest {
 	public <T> ResponseEntity<T> getUsers(String path, ParameterizedTypeReference<T> responseType){
 		return testRestTemplate.exchange(path, HttpMethod.GET, null, responseType);
 	}
-	
+	public <T> ResponseEntity<T> getUsers(String username, Class<T> responseType){
+		String path = API_1_0_USERS + "/" + username;
+		
+		return testRestTemplate.getForEntity(path, responseType);
+	}
 	private void authenticate (String username) {
 		testRestTemplate.getRestTemplate().
 			getInterceptors().add(new BasicAuthenticationInterceptor("test-user", "P4ssword")); 
