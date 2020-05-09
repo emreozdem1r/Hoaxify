@@ -8,13 +8,14 @@ const ProfileCard = (props) => {
     const showEditButton = props.isEditable && !props.inEditMode;
     
     return (
-        <div className = "card">
+        <div className = "card center">
             <ProfilImageWithDefault 
             alt = "profile" 
             width = "200" 
             height = "200" 
             image = {image}
             className = "rounded-circle shadow"
+            src = {props.loadedImage}
              />
             <div className = "card-body text-center">
                {!props.inEditMode && <h4>{`${displayName}@${username}`}</h4>}
@@ -25,6 +26,12 @@ const ProfileCard = (props) => {
                             value = {displayName}
                             label = {`Change Display Name for ${username}`}
                             onChange = {props.onChangeDisplayName}
+                            
+                        />
+                        <input
+                            className = "form-control-file mt-2"
+                            type = "file" 
+                            onChange = {props.onFileSelect}
                             />
                     </div>
                 } 
