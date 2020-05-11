@@ -22,17 +22,21 @@ const ProfileCard = (props) => {
                 
                 {props.inEditMode &&
                     <div className = "mb-2">
-                        <Input 
-                            value = {displayName}
-                            label = {`Change Display Name for ${username}`}
-                            onChange = {props.onChangeDisplayName}
-                            
+                        <Input
+                            value={displayName}
+                            label={`Change Display Name for ${username}`}
+                            onChange={props.onChangeDisplayName}
+                            hasError={props.errors.displayName && true}
+                            error={props.errors.displayName}
                         />
-                        <input
-                            className = "form-control-file mt-2"
-                            type = "file" 
-                            onChange = {props.onFileSelect}
+                         <div className="mt-2">
+                            <Input
+                                type="file"
+                                onChange={props.onFileSelect}
+                                hasError={props.errors.image && true}
+                                error={props.errors.image}
                             />
+                        </div>
                     </div>
                 } 
 
@@ -67,5 +71,8 @@ const ProfileCard = (props) => {
     );
 
 };
+ProfileCard.defaultProps = {
+    errors: {}
+}
 
 export default ProfileCard;
