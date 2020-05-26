@@ -7,7 +7,7 @@ import Topbar from './TopBar';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import authReducer from '../redux/authReducer';
-
+import * as authActions from '../redux/authActions'
 
 
 
@@ -27,9 +27,9 @@ const loggedInState = {
     password : 'P4ssword',
     isLoggedIn : true
 };
-
+let store;
 const setup = (state = defaultState) => {
-    const store = createStore(authReducer, state);
+    store = createStore(authReducer, state);
     return render (
         <Provider store = {store}>
             <MemoryRouter>
@@ -82,12 +82,24 @@ describe('TopBar', () => {
             const profileLink = queryByText('My Profile')
             expect(profileLink.getAttribute('href')).toBe('/user1');
         })
-
+        it('display the displayName when user logged in', () => {
+        
+            const {queryByText} = setup(loggedInState)
+            const displayName = queryByText('display1')
+            expect(displayName).toBeInTheDocument();
+        })
+        it('displays user image when user logged in', () => {
+        
+            const {container} = setup(loggedInState)
+            const images = container.querySelectorAll('img');
+            const userImage = images[1];
+            expect(userImage.src).toContain('/images/profile/' + loggedInState.image)
+        })
     })
 })
 
 describe("Interactions", () => {
-    it('displays the login and signup when user click logut', () => {
+    it('displays the login and signup when user click logout', () => {
         const {queryByText} = setup(loggedInState);
         const logoutLink = queryByText('Logout');
         fireEvent.click(logoutLink);
@@ -95,4 +107,17 @@ describe("Interactions", () => {
         const loginLink = queryByText('Login');
         expect(loginLink).toBeInTheDocument();
     })
+    /*it('removes show class to drop down menu when clicking logout', () => {
+        const {queryByText, queryByTestId} = setup(loggedInState);
+        const displayName = queryByText('display1');
+        fireEvent.click(displayName);
+
+        fireEvent.click(queryByText('Logout'));
+
+        store.dispatch(authActions.loginSuccess(loggedInState))
+
+        const dropDownMenu = queryByTestId('drop-down-menu');
+        expect(dropDownMenu).not.toHaveClass('show')
+    })*/
+
 })

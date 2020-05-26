@@ -425,6 +425,19 @@ describe('HomePage', () => {
             const errorMessage = queryByText('It must have minimum 4 and maximum 255 characters');
             expect(errorMessage).not.toBeInTheDocument();
         });
+        it('update redux state after updateUser api call success', async () => {
+            const { queryByText, container } = await setupForEdit();
+            let displayInput = container.querySelector('input');
+            fireEvent.change(displayInput, { target: { value: 'display1-update' } });
+            apiCalls.updateUser = jest.fn().mockResolvedValue(mockSuccessUpdateUser);
+            const saveButton = queryByText('Save');
+            fireEvent.click(saveButton);
+            
+            await waitForDomChange()
+            const storedUserData = store.getState();
+            expect(storedUserData.displayName).toBe(mockSuccessUpdateUser.data.displayName)
+            expect(storedUserData.image).toBe(mockSuccessUpdateUser.data.image)
+        });
     })
 })
 
