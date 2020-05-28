@@ -232,3 +232,4 @@ describe('Interactions', () => {
         expect(history.push).toHaveBeenCalledWith('/');
     })
 })
+console.error = () => {}

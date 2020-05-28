@@ -121,3 +121,4 @@ describe("Interactions", () => {
     })*/
 
 })
+console.error = () => {}

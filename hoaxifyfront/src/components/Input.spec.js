@@ -76,3 +76,4 @@ describe('Layout', ()=> {
 
 
 })
+console.error = () => {}

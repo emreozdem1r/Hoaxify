@@ -84,3 +84,4 @@ describe('ProfileCard', () => {
         })
     })  
 })
+console.error = () => {}

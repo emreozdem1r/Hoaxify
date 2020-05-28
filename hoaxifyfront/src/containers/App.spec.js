@@ -274,3 +274,4 @@ describe('App', () => {
     
 })
 
+console.error = () => {}

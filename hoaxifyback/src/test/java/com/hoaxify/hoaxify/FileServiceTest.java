@@ -15,8 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.hoaxify.hoaxify.configuration.AppConfiguration;
 import com.hoaxify.hoaxify.file.FileService;
 
-@RunWith(SpringRunner.class)
-@ActiveProfiles("test")
+
 public class FileServiceTest {
 
 	FileService fileService;
@@ -25,7 +24,7 @@ public class FileServiceTest {
 
 	//@MockBean
 	//FileAttachmentRepository fileAttachmentRepository;
-
+/*
 	@Before
 	public void init() {
 		appConfiguration = new AppConfiguration();
@@ -38,13 +37,13 @@ public class FileServiceTest {
 		new File(appConfiguration.getFullAttachmentsPath()).mkdir();
 	}
 
-	@Test
+	/*@Test
 	public void detectType_whenPngFileProvided_returnsImagePng() throws IOException {
 		ClassPathResource resourceFile = new ClassPathResource("test-png.png");
 		byte[] fileArr = FileUtils.readFileToByteArray(resourceFile.getFile());
 		String fileType = fileService.detectType(fileArr);
 		assertThat(fileType).isEqualToIgnoringCase("image/png");
-	}
+	}*/
 	/*
 	@Test
 	public void cleanupStorage_whenOldFilesExist_removesFilesFromStorage() throws IOException {
@@ -84,11 +83,11 @@ public class FileServiceTest {
 		fileService.cleanupStorage();
 		Mockito.verify(fileAttachmentRepository).deleteById(5L);
 	}
-*/
+
 	@After
 	public void cleanup() throws IOException {
 		FileUtils.cleanDirectory(new File(appConfiguration.getFullProfilImagePath()));
 		FileUtils.cleanDirectory(new File(appConfiguration.getFullAttachmentsPath()));
-	}
+	}*/
 
 }
